@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<queryresult success='true'
+    error='false'
+    numpods='2'
+    datatypes='Solve'
+    timedout=''
+    timedoutpods=''
+    timing='1.347'
+    parsetiming='0.999'
+    parsetimedout='false'
+    recalculate=''
+    id='MSP718018h0ie977e4cbe9c000069e6acei58ffa12g'
+    host='https://www4c.wolframalpha.com'
+    server='50'
+    related='https://www4c.wolframalpha.com/api/v1/relatedQueries.jsp?id=MSPa718118h0ie977e4cbe9c0000651512ee94cc7gci2883977977439258118'
+    version='2.6'>
+ <pod title='Input interpretation'
+     scanner='Identity'
+     id='Input'
+     position='100'
+     error='false'
+     numsubpods='1'>
+  <subpod title=''>
+   <img src='https://www4c.wolframalpha.com/Calculate/MSP/MSP718218h0ie977e4cbe9c00001c96h3401f14628f?MSPStoreType=image/gif&amp;s=50'
+       alt='solve x^2/4 (y^2/8×2) z^2 = 2^2×1 for x'
+       title='solve x^2/4 (y^2/8×2) z^2 = 2^2×1 for x'
+       width='324'
+       height='59'
+       type='Grid'
+       themes='1,2,3,4,5,6,7,8,9,10,11,12'
+       colorinvertable='true' />
+   <plaintext>solve x^2/4 (y^2/8×2) z^2 = 2^2×1 for x</plaintext>
+  </subpod>
+  <expressiontypes count='1'>
+   <expressiontype name='Default' />
+  </expressiontypes>
+ </pod>
+ <pod title='Result'
+     scanner='Solve'
+     id='Result'
+     position='200'
+     error='false'
+     numsubpods='1'
+     primary='true'>
+  <subpod title=''>
+   <img src='https://www4c.wolframalpha.com/Calculate/MSP/MSP718318h0ie977e4cbe9c0000448f6g1cf4525ee3?MSPStoreType=image/gif&amp;s=50'
+       alt='x = ± 8/(y z) and y z!=0'
+       title='x = ± 8/(y z) and y z!=0'
+       width='141'
+       height='39'
+       type='Default'
+       themes='1,2,3,4,5,6,7,8,9,10,11,12'
+       colorinvertable='true' />
+   <plaintext>x = ± 8/(y z) and y z!=0</plaintext>
+  </subpod>
+  <expressiontypes count='1'>
+   <expressiontype name='Default' />
+  </expressiontypes>
+  <states count='1'>
+   <state name='Step-by-step solution'
+       input='Result__Step-by-step solution'
+       stepbystep='true' />
+  </states>
+ </pod>
+</queryresult>
