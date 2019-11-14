@@ -21,7 +21,7 @@ class ListaLetras {
       return 'Lista de Frases Vacia';
       }else{
         var aux = this.primera;
-        var str = "[" + this.primera.letras+']';
+        var str = "[" + this.primera.letras+']\n <br>';
         while(aux.siguiente != null){
         aux = aux.siguiente;
         str += ' ->[' + aux.letras+'] \n<br>';
@@ -32,8 +32,8 @@ class ListaLetras {
   }
 
 
-  addetras (letras){
-    nueva = new Letrero(letras);
+  addLetras (letras){
+    var nueva = new Letrero(letras);
     if(this.primera == null){
       this.primera = nueva;
       this.ultima = this.primera;
@@ -107,7 +107,7 @@ class Letrero{
       this.siguiente = siguiente;
     }
 
-    set anterior(anterior){
+    set_anterior(anterior){
       this.anterior = anterior;
     }
 }

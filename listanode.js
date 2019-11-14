@@ -9,8 +9,11 @@ class ListaEcuaciones {
 	  if(this.primera==null){
 		return 'Lista de ecuaciones Vacia';
 	  }else{
-		  var aux = this.primera;
-		  var str = "[" + this.primera.ecuacion+']';
+		var aux = this.primera;
+		var str = ">>>>>[" + this.primera.ecuacion+'] \n<br>';
+		str += ' 	x->[' + this.primera.eqx+'] \n<br>';
+		str += ' 	y->[' + this.primera.eqy+'] \n<br>';
+		str += ' 	z->[' + this.primera.eqz+'] \n<br>';
 		  while(aux.siguiente != null){
 			aux = aux.siguiente;
 			str += '>>>>>[' + aux.ecuacion+'] \n<br>';
