@@ -156,7 +156,7 @@ extraerLimites macro xml,var,caracter
 endm
 
 enviar macro buffer
-  LOCAL send
+  LOCAL send, exit
 		;preparamos puerto
 		mov ah,00h ; inicializa puerto
 		mov al,11100011b ; parámetros
@@ -170,7 +170,7 @@ enviar macro buffer
     mov al,buffer[si]; caracter a enviar
 
 		cmp al,24h ; se repite el envio de datos hasta que se llegue al final del arreglo.
-    je Menu 
+    je exit 
 
     push ax
     push dx
@@ -188,27 +188,29 @@ enviar macro buffer
 		inc si   ;Incrementamos nuestro contador
 		
     jmp send 
+
+  exit:
+
 endm
 
 recibir macro buffer
-  LOCAL receive
+  LOCAL receive, exit
 		; preparamos puerto
 		mov ah,00h ; inicializa puerto
 		mov al,11100011b ; parámetros
 		mov dx,00 ; puerto COM1
-		int 14H ; llama al BIOS
+		int 14h ; llama al BIOS
 
 		mov si,00h
 	
   receive:
     mov al,0h ; reiniciamos al
-		; leemos caracter por caracter
 		mov ah,02h ; petición para recibir caracter
 		mov dx,00 ; puerto COM1
-		int 14H ; llama al BIOS
+		int 14h ; llama al BIOS
 
 		cmp al,24h ; se repite el envio de datos hasta que se llegue al final del arreglo.
-    je Menu 
+    je exit 
 
     mov buffer[si],al
 
@@ -224,6 +226,51 @@ recibir macro buffer
 
 		inc si 
     jmp receive
+
+  exit:
+    print msg_point
+    
+endm
+
+atender macro
+  LOCAL pause, controlperdido, controlretomado, exit
+    ; preparamos puerto
+    mov ah,00h ; inicializa puerto
+    mov al,11100011b ; parámetros
+    mov dx,00 ; puerto COM1
+    int 14h ; llama al BIOS
+
+    mov al,0h ; reiniciamos al
+    mov ah,02h ; petición para recibir caracter
+    mov dx,00 ; puerto COM1
+    int 14h ; llama al BIOS
+
+    cmp al,'#'
+    je controlperdido  
+
+    jmp exit
+
+  controlperdido:
+    print msg_controlp
+  
+  pause:
+    ; config again the port ?
+
+    mov al,0h ; reiniciamos al
+	  mov ah,02h ; petición para recibir caracter
+	  mov dx,00 ; puerto COM1
+	  int 14H ; llama al BIOS
+
+	  cmp al,'#'
+    je controlretomado
+
+    jmp pause
+
+  controlretomado:
+    print msg_controlr
+  
+  exit:
+    
 endm
 
 verificacion1 macro
@@ -279,6 +326,7 @@ verificacion2 macro
 
 		next:
       ; verifica puerto COM1
+
       jmp ini
     eje_xy:
       enviar v1
@@ -290,12 +338,12 @@ verificacion2 macro
 
     eje_yz:
       enviar v3
-
-    rec:
-    recibir varplot
-    print varplot
-
-    ; llamar a dibujar
+    rec: 
+      print msg_load
+      recibir varplot
+      print msg_2D
+      
+      ; llamar a draw varplot
     
     jmp Grafica2D
     
@@ -322,8 +370,13 @@ opcion2_2D db 0ah,0dh,'2. Ejes x-z$','$'
 opcion3_2D db 0ah,0dh,'3. Ejes y-z$','$'
 opcion4_2D db 0ah,0dh,'4. Regresar$','$'
 
-;msg 3D:
+;msg:
 msg_3D db 0ah,0dh,'Generando grafica 3D...', '$'
+msg_2D db 0ah,0dh,'Generando grafica 2D...', '$'
+msg_load db 0ah,0dh,'GET POINTS...', '$'
+msg_point db 0ah,0dh,'.', '$'
+msg_controlp db 0ah,0dh,'Control perdido...', '$'
+msg_controlr db 0ah,0dh,'Control retomado...', '$'
 
 ;archivo:
 path db "ECUACION.TXT", 0
@@ -357,7 +410,6 @@ varplot db 5000 dup ('$')
 v1 db 'v1','$'
 v2 db 'v2','$'
 v3 db 'v3','$'
-
 D3 db '3D','$'
 
 .code
@@ -389,6 +441,8 @@ main proc
 
       enviar varecuacion
       print varecuacion
+
+      jmp Menu
           
     Grafica2D:
       print menu2Dheader
