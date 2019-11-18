@@ -3,6 +3,8 @@ String comando2 = "";
 bool verbose = true;
 int tierra[8] = {23,25,27,29,31,33,35,37}; //NEGROS
 int dato[8] = {39,41,43,45,47,49,51,53}; //AZULES
+unsigned long time;
+int checkpoint=0;
 int clock[8] = {38,40,42,44,46,48,50,52}; //ROJOS
 #define in 36
 char letra1[8][8];
