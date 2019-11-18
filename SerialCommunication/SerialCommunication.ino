@@ -1,5 +1,7 @@
-int espacio = 0;
 String comando = "";
+String comando2 = "";
+bool verbose = true;
+
 void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
@@ -8,31 +10,8 @@ void setup() {
 }
 
 void loop() {
-//  if(Serial2.available()){
-//    Serial.print("Hay algo\n");
-//    char letra = Serial2.read();
-//    Serial.print(letra);
-//    Serial.print("---------------------------------------------------------------------------------------------");
-//    Serial1.print(letra);
-//  }
-//  else
-//  {
-//    Serial.print("No hay nada\n");
-//    
-//    if(espacio==20){
-//        Serial1.print(".");
-//        Serial1.print("$");
-//        Serial1.print("\n"); espacio=0;
-//      }
-//
-//    
-//    espacio++;
-//  }
-
-
   if(Serial.available()){
     char letra = Serial.read();
-    //Serial1.print(letra);
     comando+=letra;
   }
   else{
@@ -42,10 +21,47 @@ void loop() {
     }
   }
 
-
   if(Serial1.available()){
     char letra = Serial1.read();
-    Serial.print(letra);
+    if(verbose){
+      switch(letra){
+        case 'C':
+          //llamar cono
+          break;
+        case 'S':
+          //llamar esfera
+          break;
+        case 'P':
+          //llamar plano
+          break;
+        case 'B':
+          //llamar paraboloide
+          break;
+        case 'H':
+          //llamar hiperboloide1
+          break;
+        case 'L':
+          //llamar hiperboloide1
+          break;
+        case '[':
+          verbose = false;
+          //activar para enviar palabras
+          break;
+        case '#':
+        default:
+          Serial.print(letra);
+          break;
+      }
+    }
+    else{
+      comando2+=letra;
+    }
   }
-    
+  else{
+    if(comando2 != ""){
+      //llamar a imprimir cadena
+      comando = "";
+      verbose = true;
+    }
+  }
 }
