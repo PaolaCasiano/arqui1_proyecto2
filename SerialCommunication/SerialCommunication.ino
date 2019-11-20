@@ -37,7 +37,11 @@ void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
   Serial2.begin(9600);
+<<<<<<< HEAD
   pinMode(in,OUTPUT);
+=======
+  pinMode(in, OUTPUT);
+>>>>>>> dfec3d7e93312f61b480a306dbb1a4b5e3499c68
   for(int i = 0; i< 8; i++)
     {
         pinMode(dato[i],OUTPUT);
@@ -50,11 +54,15 @@ void setup() {
         digitalWrite(clock[i],HIGH);
         digitalWrite(clock[i],LOW);
     }
-
 }
 
 void loop() {
+<<<<<<< HEAD
   texto_3d("p l o x",3);
+=======
+
+  
+>>>>>>> dfec3d7e93312f61b480a306dbb1a4b5e3499c68
   if(Serial.available()){
     char letra = Serial.read();
     comando+=letra;
@@ -67,7 +75,9 @@ void loop() {
   }
 
   if(Serial1.available()){
-    char letra = Serial1.read();
+    String  texto = Serial1.readString();
+    //char letra = Serial1.read();
+    char letra = texto.charAt(0);
     if(verbose){
       switch(letra){
         case 'C':
@@ -88,11 +98,12 @@ void loop() {
         case 'L':
           //llamar hiperboloide1
           break;
-        case '[':
-          verbose = false;
-          //activar para enviar palabras
+        case '~':
+          //verbose = false;
+          texto_3d(texto, 3);
           break;
         case '#':
+          //ENVIAR A ASSEMBLER EL CAMBIAR DE MODO
         default:
           Serial.print(letra);
           break;
@@ -986,6 +997,9 @@ void matriz_letra(char letra){
         break;
       case ',':
         coma();
+        break;
+      case '~':
+        egne();
         break;
       default:
         //egne();
@@ -4000,3 +4014,4 @@ void imprimir_hiperboloide2(){
     }
     }
 }
+
