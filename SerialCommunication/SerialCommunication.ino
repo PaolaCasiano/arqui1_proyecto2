@@ -100,7 +100,7 @@ void loop() {
           //ENVIAR A ASSEMBLER EL CAMBIAR DE MODO
         default:
           
-          Serial.print(letra);
+          Serial.print(texto);
           break;
       }
     }
@@ -3590,25 +3590,25 @@ void hiperboloide1(){
   }
   //Nivel  2 y 5
   for(int i=3;i<5;i++){
-  	areglo_hiperboloide1[i+16+64*2]=1;
+    areglo_hiperboloide1[i+16+64*2]=1;
   }
   for(int i=2;i<6;i++){
-  	areglo_hiperboloide1[i+24+64*2]=1;
-  	areglo_hiperboloide1[i+32+64*2]=1;
+    areglo_hiperboloide1[i+24+64*2]=1;
+    areglo_hiperboloide1[i+32+64*2]=1;
   }
   for(int i=3;i<5;i++){
-  	areglo_hiperboloide1[i+40+64*2]=1;
+    areglo_hiperboloide1[i+40+64*2]=1;
   }
   //
   for(int i=3;i<5;i++){
-  	areglo_hiperboloide1[i+16+64*5]=1;
+    areglo_hiperboloide1[i+16+64*5]=1;
   }
   for(int i=2;i<6;i++){
-  	areglo_hiperboloide1[i+24+64*5]=1;
-  	areglo_hiperboloide1[i+32+64*5]=1;
+    areglo_hiperboloide1[i+24+64*5]=1;
+    areglo_hiperboloide1[i+32+64*5]=1;
   }
   for(int i=3;i<5;i++){
-  	areglo_hiperboloide1[i+40+64*5]=1;
+    areglo_hiperboloide1[i+40+64*5]=1;
   }
   //Nivel 3 y 4
   areglo_hiperboloide1[3+24+64*3]=1;
@@ -3623,7 +3623,7 @@ void hiperboloide1(){
 
 }
 void hiperboloide2(){
-	//Vaciamos
+  //Vaciamos
   for(int i=0;i<512;i++){
     areglo_hiperboloide1[i]=0;
   }
@@ -3681,25 +3681,25 @@ void hiperboloide2(){
   }
   //Nivel  2 y 5
   for(int i=3;i<5;i++){
-  	areglo_hiperboloide1[i+16+64*2]=1;
+    areglo_hiperboloide1[i+16+64*2]=1;
   }
   for(int i=2;i<6;i++){
-  	areglo_hiperboloide1[i+24+64*2]=1;
-  	areglo_hiperboloide1[i+32+64*2]=1;
+    areglo_hiperboloide1[i+24+64*2]=1;
+    areglo_hiperboloide1[i+32+64*2]=1;
   }
   for(int i=3;i<5;i++){
-  	areglo_hiperboloide1[i+40+64*2]=1;
+    areglo_hiperboloide1[i+40+64*2]=1;
   }
   //
   for(int i=3;i<5;i++){
-  	areglo_hiperboloide1[i+16+64*5]=1;
+    areglo_hiperboloide1[i+16+64*5]=1;
   }
   for(int i=2;i<6;i++){
-  	areglo_hiperboloide1[i+24+64*5]=1;
-  	areglo_hiperboloide1[i+32+64*5]=1;
+    areglo_hiperboloide1[i+24+64*5]=1;
+    areglo_hiperboloide1[i+32+64*5]=1;
   }
   for(int i=3;i<5;i++){
-  	areglo_hiperboloide1[i+40+64*5]=1;
+    areglo_hiperboloide1[i+40+64*5]=1;
   }
 }
 
@@ -4009,4 +4009,3 @@ void imprimir_hiperboloide2(){
     }
     }
 }
-
