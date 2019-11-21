@@ -38,6 +38,7 @@ void setup() {
   Serial1.begin(9600);
   Serial2.begin(9600);
   pinMode(in,OUTPUT);
+  randomSeed(analogRead(0));
   for(int i = 0; i< 8; i++)
     {
         pinMode(dato[i],OUTPUT);
@@ -73,25 +74,38 @@ void loop() {
     if(verbose){
       switch(texto.charAt(0)){
         // llamar cubo
-        // llamar cilindro
         case 'C':
           //llamar cono
+          imprimir_cono();
           break;
         case 'S':
           //llamar esfera
+          imprimir_esfera();
           break;
         case 'P':
           //llamar plano
+          int r = random(2);
+          if(r==1){
+            imprimir_planoi();
+          } else{
+            imprimir_planor();
+          }
           break;
         case 'B':
           //llamar paraboloide
+          imprimir_paraboloide();
           break;
         case 'H':
           //llamar hiperboloide1
+          imprimir_hiperboloide1();
           break;
         case 'L':
           //llamar hiperboloide2
+          imprimir_hiperboloide2();
           break;
+        case 'S':
+          //llamar cilindro
+          cubo_cilindro();
         case '~':
           //verbose = false;
           texto_3d(texto, 3);
