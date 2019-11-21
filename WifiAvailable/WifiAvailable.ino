@@ -12,9 +12,18 @@ const char* password = "a2e7a62cc5f26";
 
 //const char* ssid = "Holi:3";
 //const char* password = "amfj46571";
+/*
+  modo movil 
+    D  = desactivado
+    A  = activado
+    el flujo normal tiene el modo movil desactivado, asi que va una d
+    si el modo movil esta desactivado, solo va a buscar si cambia el estado
+    si esta activado, busca si hay ecuaciones o letras que graficar
+*/
+
 
 int estado = 0;
-String modo_movil = "D";
+String modo_movil = "D";//////////////////////////////////////////////////////////////la cagamos aqui creemos que es a antes Dv... no la cagaron XD
 
 std::string data_;
 std::string data_pantalla;
@@ -24,7 +33,7 @@ String datos;
 //String url = "http://arqui1api.herokuapp.com/";
 String url = "http://192.168.0.33:8000/";
 
-void setup() {
+void setup() {  
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
   WiFi.begin(ssid,password);   //WiFi connection
@@ -36,7 +45,6 @@ void setup() {
 
 
 void loop() {
-
  
   if(WiFi.status()== WL_CONNECTED){   //Check WiFi connection status
     //se suponen que enviaran ecuacion;xi,xs;yi,ys;zi,zs
@@ -44,10 +52,12 @@ void loop() {
       datos = Serial.readString();
       if(datos.charAt(0) == 'v'){
           GET2D(datos.charAt(1)); 
+      }else if(datos == "3D"){
+        GET3D();
       }else{
-        Serial.print("-");
-        Serial.print(datos);
-        Serial.println("-");
+        //Serial.print("-");
+        //Serial.print(datos);
+        //Serial.println("-");
         POSTEAR(datos);
       }
          
@@ -75,25 +85,30 @@ void POSTEAR(String cadena){
     cadena.replace("\r","");
     cadena.replace(" ","");
     cadena.replace("$","");
-    Serial.println(cadena);
+    //Serial.println(cadena);
 
     
     HTTPClient http;
     String metodo = "guardar_funcion?eq="+cadena;
-    Serial.print('-');
-    Serial.print(url+metodo);
-    Serial.println('-');
+    //Serial.print('-');
+    //Serial.print(url+metodo);
+    //Serial.println('-');
     http.begin(url+metodo);
           
     http.addHeader("Content-Type", "text/plain");
     char char_array[cadena.length()+1];
     strcpy(char_array,cadena.c_str());
     int httpCode = http.GET();
-    Serial.println(httpCode);
+    //Serial.println(httpCode);
     payload = http.getString();
     Serial.println(payload);
     http.end();  //Close connection
     delay(1000);
+}
+
+
+void GET3D(){
+  Serial.println("S");
 }
 
 
@@ -117,10 +132,16 @@ void GET2D(char numero){
     http.begin(url+metodo); 
     int httpCode = http.GET();
     if (httpCode > 0) { 
+      payload = "";
       payload = http.getString();   //Get the request response payload
       if(payload !="E" &&  payload != ""){
         Serial.println( http.getString()+"$"); //devuelve los puntos de la ecuacion
-      }  
+        //yield();
+      } 
+      else{
+        Serial.println('$');
+      }
+      delay(1); 
 
     }
     http.end();   //Close connection
@@ -138,7 +159,7 @@ void GETESTADO(){
       payload = http.getString();   //Get the request response payload
       if(payload != modo_movil){
         modo_movil = payload;
-        Serial.println( payload+"$");  //si cambia de estado, envia el caracter A o D para que lo envie a assembler
+        Serial.println( "#");  //si cambia de estado, envia el caracter A o D para que lo envie a assembler
       }
     }
     http.end(); 
@@ -154,9 +175,10 @@ void GETTEXTO(){
     http.begin(url+metodo);
     int httpCode = http.GET();
     if (httpCode > 0) {
+      payload = "";
       payload = http.getString(); 
       if(payload != ""){
-        Serial.println( http.getString()+"$"); 
+        Serial.println( http.getString()); 
       }
     }
     http.end();   

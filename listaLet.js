@@ -9,7 +9,8 @@ class ListaLetras {
 
 
   getLetras(){
-	  return this.actual.letras;
+    //"hello".split('').join(' ');
+	  return '~'+this.actual.letras.toLowerCase().replace(/Ñ|ñ/gi,"~").split('').join(' ');
   }
 
   moveActual(){
@@ -25,11 +26,17 @@ class ListaLetras {
         while(aux.siguiente != null){
         aux = aux.siguiente;
         str += ' ->[' + aux.letras+'] \n<br>';
-  
         }
         return str;
       }
   }
+
+  vaciarLista(){
+    this.actual = null;
+    this.primera = null;
+    this.ultima = null;
+  }
+
 
 
   addLetras (letras){
@@ -41,6 +48,9 @@ class ListaLetras {
     }else{
       this.ultima.siguiente = nueva;
       this.ultima = this.ultima.siguiente
+      if(this.actual == null){
+        this.actual = this.ultima;
+      }
     }
   }
 

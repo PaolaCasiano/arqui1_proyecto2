@@ -37,6 +37,7 @@ void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
   Serial2.begin(9600);
+  pinMode(in,OUTPUT);
   for(int i = 0; i< 8; i++)
     {
         pinMode(dato[i],OUTPUT);
@@ -49,10 +50,11 @@ void setup() {
         digitalWrite(clock[i],HIGH);
         digitalWrite(clock[i],LOW);
     }
-
 }
 
 void loop() {
+
+  
   if(Serial.available()){
     char letra = Serial.read();
     comando+=letra;
@@ -65,9 +67,9 @@ void loop() {
   }
 
   if(Serial1.available()){
-    char letra = 'A';//Serial1.read();
-    String texto = Serial1.readString();
-    
+    String  texto = Serial1.readString();
+    //char letra = Serial1.read();
+    char letra = texto.charAt(0);
     if(verbose){
       switch(texto.charAt(0)){
         // llamar cubo
@@ -91,13 +93,11 @@ void loop() {
           //llamar hiperboloide2
           break;
         case '~':
-          verbose = false;
-          Serial.println("ha entrado a texto");
-          texto_3d(texto,3);
-          //activar para enviar palabras
+          //verbose = false;
+          texto_3d(texto, 3);
           break;
         case '#':
-          break;
+          //ENVIAR A ASSEMBLER EL CAMBIAR DE MODO
         default:
           
           Serial.print(letra);
@@ -992,6 +992,9 @@ void matriz_letra(char letra){
         break;
       case ',':
         coma();
+        break;
+      case '~':
+        egne();
         break;
       default:
         //egne();
@@ -3586,7 +3589,118 @@ void hiperboloide1(){
     areglo_hiperboloide1[i+48+64*6]=1;
   }
   //Nivel  2 y 5
+  for(int i=3;i<5;i++){
+  	areglo_hiperboloide1[i+16+64*2]=1;
+  }
+  for(int i=2;i<6;i++){
+  	areglo_hiperboloide1[i+24+64*2]=1;
+  	areglo_hiperboloide1[i+32+64*2]=1;
+  }
+  for(int i=3;i<5;i++){
+  	areglo_hiperboloide1[i+40+64*2]=1;
+  }
+  //
+  for(int i=3;i<5;i++){
+  	areglo_hiperboloide1[i+16+64*5]=1;
+  }
+  for(int i=2;i<6;i++){
+  	areglo_hiperboloide1[i+24+64*5]=1;
+  	areglo_hiperboloide1[i+32+64*5]=1;
+  }
+  for(int i=3;i<5;i++){
+  	areglo_hiperboloide1[i+40+64*5]=1;
+  }
+  //Nivel 3 y 4
+  areglo_hiperboloide1[3+24+64*3]=1;
+  areglo_hiperboloide1[4+24+64*3]=1;
+  areglo_hiperboloide1[3+32+64*3]=1;
+  areglo_hiperboloide1[3+32+64*3]=1;
+  //
+  areglo_hiperboloide1[3+24+64*4]=1;
+  areglo_hiperboloide1[4+24+64*4]=1;
+  areglo_hiperboloide1[3+32+64*4]=1;
+  areglo_hiperboloide1[3+32+64*4]=1;
 
+}
+void hiperboloide2(){
+	//Vaciamos
+  for(int i=0;i<512;i++){
+    areglo_hiperboloide1[i]=0;
+  }
+  //Nivel 0 y 7
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[i]=1;
+  }
+  areglo_hiperboloide1[1+8]=1;
+  areglo_hiperboloide1[6+8]=1;
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[8*i]=1;
+  }
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[7+8*i]=1;
+  }
+  areglo_hiperboloide1[1+48]=1;
+  areglo_hiperboloide1[6+48]=1;
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[i+56]=1;
+  }
+  //
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[i+64*7]=1;
+  }
+  areglo_hiperboloide1[1+8+64*7]=1;
+  areglo_hiperboloide1[6+8+64*7]=1;
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[8*i+64*7]=1;
+  }
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[7+8*i+64*7]=1;
+  }
+  areglo_hiperboloide1[1+48+64*7]=1;
+  areglo_hiperboloide1[6+48+64*7]=1;
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[i+56+64*7]=1;
+  }
+  //Nivel 1 y 6
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[1+8*i+64]=1;
+    areglo_hiperboloide1[6+8*i+64]=1;
+  }
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[i+8+64]=1;
+    areglo_hiperboloide1[i+48+64]=1;
+  }
+  //
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[1+8*i+64*6]=1;
+    areglo_hiperboloide1[6+8*i+64*6]=1;
+  }
+  for(int i=2;i<6;i++){
+    areglo_hiperboloide1[i+8+64*6]=1;
+    areglo_hiperboloide1[i+48+64*6]=1;
+  }
+  //Nivel  2 y 5
+  for(int i=3;i<5;i++){
+  	areglo_hiperboloide1[i+16+64*2]=1;
+  }
+  for(int i=2;i<6;i++){
+  	areglo_hiperboloide1[i+24+64*2]=1;
+  	areglo_hiperboloide1[i+32+64*2]=1;
+  }
+  for(int i=3;i<5;i++){
+  	areglo_hiperboloide1[i+40+64*2]=1;
+  }
+  //
+  for(int i=3;i<5;i++){
+  	areglo_hiperboloide1[i+16+64*5]=1;
+  }
+  for(int i=2;i<6;i++){
+  	areglo_hiperboloide1[i+24+64*5]=1;
+  	areglo_hiperboloide1[i+32+64*5]=1;
+  }
+  for(int i=3;i<5;i++){
+  	areglo_hiperboloide1[i+40+64*5]=1;
+  }
 }
 
 void imprimir_planor(){
@@ -3808,3 +3922,91 @@ void imprimir_paraboloide(){
     }
     }
 }
+
+void imprimir_hiperboloide1(){
+  hiperboloide1();
+  startMillis = millis();
+  int f =0;
+   while(f==0)
+    {
+    int point=0;
+    for(int i = 0; i < 8; i++)//CAPAS
+    {
+        //ACTIVAMOS ALTA IMPEDANCIA
+        digitalWrite(in,HIGH);
+        //DESACTIVAMOS LA TIERRA DE LA CAPA QUE ACTIVAMOS EN EL CICLO ANTERIOR
+        digitalWrite(tierra[i-1],LOW);
+    
+        for(int j = 0; j < 8; j++)//FILAS
+        {  
+            for(int k = 0; k < 8; k++)//DATOS
+            {
+                //CARGAMOS EL DATO EN LA LINEA K
+                digitalWrite(dato[k],areglo_hiperboloide1[point]);
+                //MOVEMOS UNA POSCICION A LA DERECHA EN EL ARRAY CUBO
+                point++;
+            }
+            //PULSO PARA CADA FLIP-FLOP
+            digitalWrite(clock[j],HIGH);
+            digitalWrite(clock[j],LOW);
+        }
+
+        //QUITAMOS ALTA IMPEDANCIA
+        digitalWrite(in,LOW);
+        //ACTIVAMOS LA TIERRA DE LA CAPA
+        digitalWrite(tierra[i],HIGH);
+        //delayMicroseconds(1600);
+        delay(1);
+  }
+  //APAGAMOS LA ULTIMA CAPA
+    digitalWrite(tierra[7],LOW);
+    if (millis() - startMillis >= velocidad_formas)  //test whether the period has elapsed
+    {
+        f=1;
+    }
+    }
+}
+void imprimir_hiperboloide2(){
+  hiperboloide2();
+  startMillis = millis();
+  int f =0;
+   while(f==0)
+    {
+    int point=0;
+    for(int i = 0; i < 8; i++)//CAPAS
+    {
+        //ACTIVAMOS ALTA IMPEDANCIA
+        digitalWrite(in,HIGH);
+        //DESACTIVAMOS LA TIERRA DE LA CAPA QUE ACTIVAMOS EN EL CICLO ANTERIOR
+        digitalWrite(tierra[i-1],LOW);
+    
+        for(int j = 0; j < 8; j++)//FILAS
+        {  
+            for(int k = 0; k < 8; k++)//DATOS
+            {
+                //CARGAMOS EL DATO EN LA LINEA K
+                digitalWrite(dato[k],areglo_hiperboloide2[point]);
+                //MOVEMOS UNA POSCICION A LA DERECHA EN EL ARRAY CUBO
+                point++;
+            }
+            //PULSO PARA CADA FLIP-FLOP
+            digitalWrite(clock[j],HIGH);
+            digitalWrite(clock[j],LOW);
+        }
+
+        //QUITAMOS ALTA IMPEDANCIA
+        digitalWrite(in,LOW);
+        //ACTIVAMOS LA TIERRA DE LA CAPA
+        digitalWrite(tierra[i],HIGH);
+        //delayMicroseconds(1600);
+        delay(1);
+  }
+  //APAGAMOS LA ULTIMA CAPA
+    digitalWrite(tierra[7],LOW);
+    if (millis() - startMillis >= velocidad_formas)  //test whether the period has elapsed
+    {
+        f=1;
+    }
+    }
+}
+
