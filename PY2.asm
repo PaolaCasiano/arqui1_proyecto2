@@ -1,3 +1,116 @@
+setVideoMode macro 
+  mov ah,0Fh
+  int 10h
+  mov saveMode,al
+
+  mov ah,0
+  mov al,Modo_13
+  int 10h
+
+    mov cx, SEGMENTO_VIDEO 
+    push cx 
+  pop es
+
+endm
+
+setOriginalMode macro
+  mov ah,0 
+  mov al,saveMode
+  int 10h
+
+endm
+
+draw macro poslin, color
+    push dx
+
+    mov di,poslin
+    mov dl,color
+    mov es:[di],dl
+
+    pop dx
+
+endm
+
+graficarCadena macro cadena,num
+  LOCAL PrimerNum,Coma,SegundoNum,PuntoComa,Salir
+    xor si,si
+    xor di,di
+    num1dw dw ?
+    num2dw dw ?
+    digitnum dw ?
+    ls dw ?
+    mov ls,0
+    mov digitnum,0
+  PrimerNum:
+    mov al,cadena[si]
+    cmp al,2ch
+    je Coma
+    cmp al,24h
+    je Salir
+    mov num[di],al
+    inc di
+    inc si
+    inc digitnum
+    inc ls
+    jmp PrimerNum 
+  Coma:
+    dec ls
+    stringANumero digitnum,ls,num
+    mov num1dw,bx
+    draw num1dw,0Fh
+    inc si
+    limpiarVariable2 num
+    xor di,di
+    mov digitnum,0
+    mov ls,0
+    mov al,cadena[si]
+    cmp al,24h
+    je Salir
+    jmp PrimerNum
+  Salir:
+    ;dec ls
+    ;stringANumero digitnum,ls,num
+    ;mov num2dw,bx
+    ;draw num2dw,0Fh
+    ;inc si
+    ;mov digitnum,0
+    ;mov ls,0
+    ;limpiarVariable2 num
+    ;xor di,di
+
+    ;mov cx,num1dw
+    ;mov bx,num2dw
+endm
+
+stringANumero macro digitos,lsnum,num
+  LOCAL repetir
+    push si
+    
+    mov cx,digitos ;(Porque tiene 4 digitos el numero) 
+    mov si,lsnum ;(Para que si apunte al digito menos significativo)
+    
+    mov  bx, 0
+    mov  bp, 1
+  repetir:         
+                    
+    mov  al,num[si] 
+    sub  al,48 
+    mov  ah,0 
+    mul  bp 
+    add  bx,ax  
+
+    mov  ax,bp
+    mov  bp,10
+    mul  bp 
+    mov  bp, ax   
+
+    dec  si 
+  Loop repetir
+   
+  pop si
+
+endm
+
 print macro buffer
   mov ax, @data
   mov ds,ax
@@ -46,6 +159,17 @@ limpiarVariable macro var,tam,caracter
   Loops:
     mov var[si],caracter
     inc si
+  Loop Loops
+endm
+
+limpiarVariable2 macro var
+  LOCAL Loops
+    xor di,di
+    xor cx,cx
+    mov cx, SIZEOF var
+  Loops:
+    mov var[di],24h
+    inc di
   Loop Loops
 endm
 
@@ -232,8 +356,8 @@ recibir macro buffer
     
 endm
 
-atender macro
-  LOCAL pause, controlperdido, controlretomado, exit
+atender macro men
+  LOCAL pause, controlperdido, controlretomado, gotoMenu, exit
     ; preparamos puerto
     mov ah,00h ; inicializa puerto
     mov al,11100011b ; parámetros
@@ -268,7 +392,17 @@ atender macro
 
   controlretomado:
     print msg_controlr
-  
+    push ax
+    mov ah,men
+    cmp ah,1
+    je gotoMenu
+    pop ax
+    jmp Grafica2D
+
+  gotoMenu:
+    pop ax
+    jmp Menu
+
   exit:
     
 endm
@@ -296,14 +430,14 @@ verificacion1 macro
       je Salir
 
 		next:
-      ; verifica puerto COM1
+      atender 1
 
     continue:
       jmp ini
 endm 
 
 verificacion2 macro
-  LOCAL ini, next, eje_xy, eje_xz, eje_yz, rec
+  LOCAL ini, next, eje_xy, eje_xz, eje_yz, rec, pause, exit
     ini:
 			mov ah,01h
 			int 16h ; check keyboard buffer
@@ -325,9 +459,9 @@ verificacion2 macro
       je Menu
 
 		next:
-      ; verifica puerto COM1
-
+      atender 0
       jmp ini
+
     eje_xy:
       enviar v1
       jmp rec
@@ -340,15 +474,29 @@ verificacion2 macro
       enviar v3
     rec: 
       print msg_load
+      limpiarVariable varplot, SIZEOF varplot, 24h
       recibir varplot
       print msg_2D
       
-      ; llamar a draw varplot
-    
+      setVideoMode
+      graficarCadena varplot, buffernum
+    pause:
+      mov ah,01h
+			int 16h ; check keyboard buffer
+			jz pause
+
+      mov ah,00h ; read from keyboard buffer
+			int 16h
+
+      cmp ah,1
+			jne pause
+
+    exit: 
+      setOriginalMode
+
     jmp Grafica2D
     
 endm 
-
 
 .model small
 .stack 100h
@@ -382,6 +530,17 @@ msg_controlr db 0ah,0dh,'Control retomado...', '$'
 path db "ECUACION.TXT", 0
 handlertexto dw ?
 bufarchivo db 1000 dup('$')
+
+;modo video
+saveMode BYTE ?
+SEGMENTO_VIDEO = 0A000h
+Modo_13 = 13h
+
+;graficar
+COLOR = 9
+poslineal word 0 ; coordenada linealizada
+buffernum db 6 dup ('$')
+digitos dw ?
 
 ;lexico:
 elexico db 0ah,0dh,'************ ERROR LEXICO ************','$'
@@ -440,7 +599,7 @@ main proc
       extraerLimites bufarchivo,varecuacion,7ah
 
       enviar varecuacion
-      print varecuacion
+      ;print varecuacion
 
       jmp Menu
           

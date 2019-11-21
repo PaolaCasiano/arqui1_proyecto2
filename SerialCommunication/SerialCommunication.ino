@@ -65,9 +65,13 @@ void loop() {
   }
 
   if(Serial1.available()){
-    char letra = Serial1.read();
+    char letra = 'A';//Serial1.read();
+    String texto = Serial1.readString();
+    
     if(verbose){
-      switch(letra){
+      switch(texto.charAt(0)){
+        // llamar cubo
+        // llamar cilindro
         case 'C':
           //llamar cono
           break;
@@ -84,14 +88,18 @@ void loop() {
           //llamar hiperboloide1
           break;
         case 'L':
-          //llamar hiperboloide1
+          //llamar hiperboloide2
           break;
-        case '[':
+        case '~':
           verbose = false;
+          Serial.println("ha entrado a texto");
+          texto_3d(texto,3);
           //activar para enviar palabras
           break;
         case '#':
+          break;
         default:
+          
           Serial.print(letra);
           break;
       }
@@ -102,8 +110,8 @@ void loop() {
   }
   else{
     if(comando2 != ""){
-      //llamar a imprimir cadena
-      comando = "";
+      texto_3d(comando2,3);
+      comando2 = "";
       verbose = true;
     }
   }
@@ -3800,4 +3808,3 @@ void imprimir_paraboloide(){
     }
     }
 }
-
