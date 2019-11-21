@@ -12,9 +12,18 @@ const char* password = "a2e7a62cc5f26";
 
 //const char* ssid = "Holi:3";
 //const char* password = "amfj46571";
+/*
+  modo movil 
+    D  = desactivado
+    A  = activado
+    el flujo normal tiene el modo movil desactivado, asi que va una d
+    si el modo movil esta desactivado, solo va a buscar si cambia el estado
+    si esta activado, busca si hay ecuaciones o letras que graficar
+*/
+
 
 int estado = 0;
-String modo_movil = "A";
+String modo_movil = "D";//////////////////////////////////////////////////////////////la cagamos aqui creemos que es a antes Dv... no la cagaron XD
 
 std::string data_;
 std::string data_pantalla;
@@ -36,9 +45,6 @@ void setup() {
 
 
 void loop() {
-
-  
-
  
   if(WiFi.status()== WL_CONNECTED){   //Check WiFi connection status
     //se suponen que enviaran ecuacion;xi,xs;yi,ys;zi,zs
@@ -153,7 +159,7 @@ void GETESTADO(){
       payload = http.getString();   //Get the request response payload
       if(payload != modo_movil){
         modo_movil = payload;
-        Serial.println( payload+"$");  //si cambia de estado, envia el caracter A o D para que lo envie a assembler
+        Serial.println( "#");  //si cambia de estado, envia el caracter A o D para que lo envie a assembler
       }
     }
     http.end(); 

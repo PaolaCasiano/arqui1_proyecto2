@@ -26,7 +26,11 @@ class ListaEcuaciones {
 	  }
   }
 
-
+  vaciarLista(){
+  	this.actual = null;
+	this.primera = null;
+	this.ultima = null;
+  }
 
   addEcuacion (ecuacion, xi, xs, yi, ys, zi, zs, eqx, eqy, eqz){
 	var nueva = new Ecuacion(ecuacion, xi, xs, yi, ys, zi, zs, eqx, eqy, eqz);
@@ -86,6 +90,50 @@ class Ecuacion{
 		response = [];
 		return response;
 	}
+
+	getTipo(){
+		var yto2 		= this.eqz.match(/y\^2/g);
+		var xto2 		= this.eqz.match(/x\^2/g);
+		var justx		= this.eqz.match(/x/g);
+		var justy		= this.eqz.match(/y/g);
+		var sqrt		= this.eqz.match(/sqrt/g);
+		var coma 		= this.eqz.match(/,/g);
+
+		/*
+		C CONO
+			S ESFERA
+			P PLANO
+			B PARABOLOIDE
+		H HIPERBOLOIDE1
+		J HIPERBOLOIDE2
+			L CILINTRO
+		*/
+
+		if(this.eqx == ""  || this.eqy == "" || this.eqz == ""){
+			return "L";
+		}
+
+		if(justx.length == 4 && justy.length == 4 && sqrt.length == 2){
+			return "S";
+		}
+
+		if(xto2.length == 0 && yto2.length == 0 && sqrt.length == 0){
+			return "P";
+		}
+
+		var x2y = (xto2.length == 1 && yto2.length == 0 && justy.length == 1);
+		var y2x = (yto2.length == 1 && xto2.length == 0 && justx.length == 1);
+		if(sqrt.length == 2 && (x2y || y2x)){
+			return "B";
+		}else if(coma.length == 0 && (yto2.length == 0 && justy.length == 1 || xto2.length == 0 && justx.length == 1)){
+			return "B";
+		}
+
+		return "J";
+
+	}
+
+
 }
 
 

@@ -15,39 +15,60 @@ var math = require('mathjs')
 //api link http://api.wolframalpha.com/v2/query?input=solve+3x-7%3D11for+x&appid=LVALQJ-UPG9XXATRG
 //http://api.wolframalpha.com/v2/query?input=solve+{{ecuacion lado 1}}%3D{{ecuacion igual a}}for+{{Variable a despejar}}&appid=LVALQJ-UPG9XXATRG
 
-var lista = new ListaEcuaciones()
-var letras =  new ListaLetras()
-var estado = 1
-var paso = 0.5;
-var no_puntos = 20;
-var unidadx = 1;
-var unidady = 1;
-var axisH   = 100;
-var axisV  	= 0;
+var lista 		= new ListaEcuaciones()
+var letras 		=  new ListaLetras()
+var estado 		= 1
+var paso 		= 0.5;
+var no_puntos 	= 100;
+var unidadx 	= 1;
+var unidady 	= 1;
+var axisH   	= 200;
+var axisV  		= 0;
+var ancho 		= 320;
+var alto 		= 200;
 
-app.post('/guardar_funcion', function (req, res) {
+var modo_movil = 'D';
+
+app.get('/guardar_funcion', function (req, res) {
 	var posB = req.query;
-	var equation = posB.equ;
-	equation = equation.replace(/ /g, "");
-	var eqx = getEqAxis(equation, 'x');
-	var eqy = getEqAxis(equation, 'y');
-	var eqz = getEqAxis(equation, 'z');
-	lista.addEcuacion(
-				posB.equ
-				, posB.xi
-				, posB.xs
-				, posB.yi
-				, posB.ys
-				, posB.zi
-				, posB.zs
-				, eqx
-				, eqy
-				, eqz
-				);	
-	res.send('se guardo ecuacion');
+	var assembly = posB.eq.split(';');
+
+	if(assembly.length >0){
+		var equation = assembly[0];
+		equation = equation.replace(/ /g, "");
+		var eqx = getEqAxis(equation, 'x');
+		var eqy = getEqAxis(equation, 'y');
+		var eqz = getEqAxis(equation, 'z');	
+
+		var limx = assembly[1].split(',');
+		var limy = assembly[2].split(',');
+		var limz = assembly[3].split(',');
+		lista.addEcuacion(
+					equation
+					, limx[0]
+					, limx[1]
+					, limy[0]
+					, limy[1]
+					, limz[0]
+					, limz[1]
+					, eqx
+					, eqy
+					, eqz
+					);	
+		res.send('se guardo ecuacion');
+	}
+	
+	
  });
 
  app.post('/guardar_letras', function(req,res){
+	var postB = req.query;
+	//console.log(req);
+	letras.addLetras(postB.letras);
+	res.send('se ha guardado');
+ });
+
+ app.get('/guardar_letras', function(req,res){
 	var postB = req.query;
 	console.log(req.query);
 	letras.addLetras(postB.letras);
@@ -56,11 +77,17 @@ app.post('/guardar_funcion', function (req, res) {
 
  app.get('/cambiar_movil', function(req,res){
 	estado = 2;
-	res.send(2);
+	modo_movil= 'A';
+	res.send('A');
  });
 
  app.get('/imprimir', function(req,res){
 	var str = imprimirListas();
+	res.send(str);
+ });
+
+ app.get('/prueba_figura', function(req,res){
+	var str = prueba_figura();
 	res.send(str);
  });
 
@@ -69,20 +96,72 @@ app.post('/guardar_funcion', function (req, res) {
 	data = letras.returnxml();
 	var jsonstr = xmlParser.toJson(data);
 	var json = JSON.parse(jsonstr);
-	res.send(json.queryresult.pod[1].subpod.plaintext);
+	res.send('Bienvenido a mi server :3');
  });
 
  app.get('/get_estado', function(req,res){
-	res.send(estado);
+ 	//console.log(modo_movil);
+	res.send(modo_movil);
+ });
+
+ app.get('/borrarListaEcuaciones', function(req,res){
+	lista.vaciarLista();
+ });
+
+ app.get('/borrarListaTexto', function(req,res){
+	letras.vaciarLista();
  });
 
  app.get('/cambiar_escritorio', function(req, res){
-	estado = 1;
-	res.send(1);
+	modo_movil = 'D';	
+	res.send('D');
  });
 
  app.get('/prueba',function(req, res){
+ 	var ecuaciones = [
+	 	'z^2 = (4+5*2)*x^2 + (4+5*3/2)*y^2'
+		, '(x-(4+5/6*5))^2 + (y-(5*2+5))^2 + (z-(1*2+3*4))^2 = (2+2)^2'
+		//, 'x/(4+5/6*5) + y/(5*2+5) + z/(1*2+3*4) = 1'
+		//, 'z = x^2 + y ^2'
+		//, '-x^2/(4+5/6*5)^2 + y^2/(5*2+5)^2 + z^2/(1*2+3*4)^2 = 1'
+		//, '-x^2/(4+5/6*5)^2 + y^2/(5*2+5)^2 - z^2/(1*2+3*4)^2 = 1'
+		//, 'x^2 + y^2 = (2+2)^2'
+		];
+
 	var posB = {
+		'xi': '-10'
+		, 'xs': '10'
+		, 'yi': '-10'
+		, 'ys': '10'
+		, 'zi': '-10'
+		, 'zs': '10'
+	};
+
+		var equation = "";
+	for (var i = 0; i < ecuaciones.length; i++) {
+		equation = ecuaciones[i]; 	
+		equation = equation.replace(/ /g, "");
+		//res.send(equation);
+		//return;
+		console.log(equation);
+		var eqx = getEqAxis(equation, 'x');
+		var eqy = getEqAxis(equation, 'y');
+		var eqz = getEqAxis(equation, 'z');
+		lista.addEcuacion(
+					equation
+					, posB.xi
+					, posB.xs
+					, posB.yi
+					, posB.ys
+					, posB.zi
+					, posB.zs
+					, eqx
+					, eqy
+					, eqz
+					);	
+	}
+
+	/*var posB = {
 		'equ':'(x^2/4) + (y^2/8+2) + z^2 = 2^2 * 1'
 		, 'xi': '-10'
 		, 'xs': '10'
@@ -93,10 +172,10 @@ app.post('/guardar_funcion', function (req, res) {
 	};
 	
 	var equation = posB.equ;
-	equation = equation.replace(/ /g, "");
+	equation = equation.replace(/ /g, "");*/
 	//res.send(equation);
 	//return;
-	var eqx = getEqAxis(equation, 'x');
+	/*var eqx = getEqAxis(equation, 'x');
 	var eqy = getEqAxis(equation, 'y');
 	var eqz = getEqAxis(equation, 'z');
 	lista.addEcuacion(
@@ -110,7 +189,7 @@ app.post('/guardar_funcion', function (req, res) {
 				, eqx
 				, eqy
 				, eqz
-				);	
+				);	*/
 	var imprime = imprimirListas();
 	imprime += '<br><br>\n \n' + getPuntos(lista.primera, 'x-y', 0);
 	res.send(imprime);
@@ -119,7 +198,7 @@ app.post('/guardar_funcion', function (req, res) {
 app.get('/getUltimaEcuacion2D', (req, res) => {	
 	var codigo = 0;
 	var mensaje = '';
-	var eq = null;
+	var eq = 'E';//envio caracter E para indicar al modulo que la lista esta vacia
 	var axis = req.query;
 	var ejes = axis.ejes;
 
@@ -134,47 +213,29 @@ app.get('/getUltimaEcuacion2D', (req, res) => {
 	var response = {
 		'codigo': codigo
 		, 'mensaje':mensaje
-		//, 'puntos': eq
 	};
-
 	console.log(response);
   	res.send(eq);
 });
 
 app.get('/getEcuacionActual3D', (req, res)=>{
-	var codigo = 0;
-	var mensaje = '';
-	var eq = null;
-	var axis = req.query;
-	var ejes = axis.ejes;
-
-	if(lista.ultima == null){
-		codigo = 2;
-		mensaje = 'Lista de ecuaciones vacia';
-	}else{
-		var equa = lista.ultima;
-		eq = getPuntos(equa, ejes, 0);
+	var eq = "E";
+	if(lista.ultima != null){
+		console.log(lista.ultima.ecuacion);
+		eq = lista.ultima.getTipo();
 	}
-
-	var response = {
-		'codigo': codigo
-		, 'mensaje':mensaje
-		, 'puntos': eq
-	};
-
-	console.log(response);
   	res.send(eq);
 });
 
-app.get('/getUltimoLetrero', (req, res) => {
+app.get('/getUltimoTexto', (req, res) => {
 	var codigo = 0;
 	var mensaje = '';
-	var eq = null;
+	var eq = '';
 	
 	if(letras.actual == null){
 		eq = '';
 	}else{
-		eq = letras.actual.getLetras();
+		eq = letras.getLetras();
 		letras.moveActual();
 	}
 	
@@ -183,6 +244,7 @@ app.get('/getUltimoLetrero', (req, res) => {
 		, 'mensaje':mensaje
 		, 'puntos': eq
 	};
+	console.log(response);
   	res.send(eq);
 });
 
@@ -192,6 +254,13 @@ function imprimirListas(){
 	str += letras.imprimir();
 	return str;
 }
+
+function prueba_figura(argument) {
+	if(lista.ultima != null){
+		return lista.ultima.esCono();
+	}
+}
+
 
 function getEqAxis(eq, axis){
 	var ecuacion = eq;
@@ -311,8 +380,8 @@ function getPuntos(nodo_eq, ejes, rz) {
 	const expr = math.compile(expression);
 	const exprN = math
 	paso = (maxH - minH)/no_puntos;
-	unidadx = 320 / (maxH - minH);
-	unidady = 100 / (maxV - minV );
+	unidadx = ancho / (maxH - minH);
+	unidady = alto / (maxV - minV );
 
     var xValues = math.range(minH, maxH, paso).toArray()
     var yValues = xValues.map(function (xval) {
@@ -328,9 +397,9 @@ function getPuntos(nodo_eq, ejes, rz) {
     });
 
     if(plot_negative){
+    	console.log('Ploting negative...')
 	    var yNeVal = xValues.map(function (xval) {
 	     	yval =  negative.evaluate({x: xval});
-	     	//console.log(typeof yval == 'object');
 	     	if(typeof yval == 'object'){
 	     		yval = 'x';
 	     	}else{
@@ -340,8 +409,8 @@ function getPuntos(nodo_eq, ejes, rz) {
 	        return yval;
 	    });
 
-	    xValues.concat(xValues); 
-	    yValues.concat(yNeVal); 
+	    xValues = xValues.concat(xValues); 
+	    yValues = yValues.concat(yNeVal); 
 
     }
 
@@ -351,14 +420,12 @@ function getPuntos(nodo_eq, ejes, rz) {
         equation: expression
     }
 
-    const data = [trace1];
-    console.log(data);
-
-    arrayLinealizado = Axis(minH, maxH, minV, maxV);
-    arrayLinealizado += '|';
+     Axis(minH, maxH, minV, maxV);
+     console.log(expression);
+    //arrayLinealizado = Axis(minH, maxH, minV, maxV);
+    //arrayLinealizado += ';';
     arrayLinealizado += linealizar(xValues, yValues);
 
-    //console.log(arrayLinealizado);
 
     return arrayLinealizado;
 }
@@ -376,13 +443,11 @@ function getPuntos(nodo_eq, ejes, rz) {
   			 |
 			0
 */
-
-
 function Axis(minH, maxH, minV, maxV){
 
 	var paintaxis = '';
 	if(maxH < 0){//si el eje horizontal se muestra en el cuadrante negativo
-		axisV = 320;
+		axisV = ancho;
 	}else if(minH < 0 && maxH >0){//significa que el eje vertical no va en 0, sino va movido
 		axisV = (0- minH) * unidadx;//en que pixel 
 		axisV = Math.round( axisV );
@@ -391,19 +456,30 @@ function Axis(minH, maxH, minV, maxV){
 	if(maxV < 0){
 		axisH =  0;
 	}else if(minV <0 && maxV >0){
-		//console.log(minV);
-		axisH = 100-((0-minV)*unidady);
+		axisH = alto -((0-minV)*unidady);
 		axisH = Math.round(axisH);
 	}
 
 	//eje horizontal
-	for (var i = 0 ; i < 320; i++) {
-		paintaxis += i + ','+axisH+';';
+	for (var i = 0 ; i < ancho; i++) {
+		//formula = y *ancho + x
+		// y = axisH
+		// x = i
+		//paintaxis += i + ','+axisH+';';
+		if(i>0){
+			paintaxis += ',';
+		}
+		paintaxis += axisH * ancho + i ;
 	}
 
 	//eje vertical
-	for (var i = 0; i < 100; i++) {
-		paintaxis += axisV + ','+i+';';
+	for (var i = 0; i < alto; i++) {
+		//paintaxis += axisV + ','+i+';';
+		if(i>0){
+			paintaxis += ',';
+		}
+		paintaxis += i * ancho +axisV ;
+		
 	}
 
 	return paintaxis;
@@ -413,27 +489,57 @@ function Axis(minH, maxH, minV, maxV){
 
 function linealizar(xval,yval) {
 	var linea = '';
+	var x = 0;
+	var y = 0;
+
+	var xlin = [];
+
+	var conteo = 0;
 	for (var i = 0; i < xval.length; i++) {
 		if(yval[i]!= 'x'){
-			linea += Math.round(axisV + xval[i]*unidadx);
+			conteo ++;
+			if(linea != ''){
+				linea += ',';
+			}
+			x = Math.round(axisV + xval[i]*unidadx);
+			y = Math.round(axisH + yval[i]*unidady);
+
+			xlin.push([x,y]);
+			//utilizar la linea de abajo para tener el resultado linealizado
+			linea += y * ancho + x
+
+			//descomentar esto para coordenadas x y
+			/*linea += Math.round(axisV + xval[i]*unidadx);
 			linea +=',';
-			linea += Math.round(axisH + yval[i]*unidady);
-			linea += ';'
+			linea += Math.round(axisH + yval[i]*unidady);*/
+			
 		}
 	}
 
+	var lll = {
+		x: xval,
+		y: yval
+	}
+	//console.log('PUNTOS');
+	console.log(lll);
+	console.log(xlin);
+	//console.log(xval.length);
+	//console.log(conteo);
 	return linea;
 }
 
 function analizarEcuacion(ecuacion) {
-	// body...
 }
 
+
+function get3DPoints(argument) {
+	// body...
+}
 
 /*
 	reconocer las ecuaciones 
 
 */
 // dejar esto de ultimo para que no se pierda
-http.createServer(app).listen(process.env.PORT || 8000);
+http.createServer(app).listen(process.env.PORT || 8000, '0.0.0.0');
 
