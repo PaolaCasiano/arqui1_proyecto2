@@ -103,7 +103,7 @@ void loop() {
           //llamar hiperboloide2
           imprimir_hiperboloide2();
           break;
-        case 'S':
+        case 'K':
           //llamar cilindro
           cubo_cilindro();
         case '~':
