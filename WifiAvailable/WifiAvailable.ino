@@ -50,28 +50,30 @@ void loop() {
     //se suponen que enviaran ecuacion;xi,xs;yi,ys;zi,zs
     if(Serial.available() >0){
       datos = Serial.readString();
+      //Serial.println(datos);
       if(datos.charAt(0) == 'v'){
           GET2D(datos.charAt(1)); 
       }else if(datos == "3D"){
         GET3D();
       }else{
-        //Serial.print("-");
+        //Serial.print("debe postear");
         //Serial.print(datos);
         //Serial.println("-");
         POSTEAR(datos);
+        //Serial.print("ya posteo");
       }
          
     }else{
-      if(estado == 1){
+      /*if(estado == 1){
         estado = 0;
         delay(1);
-      }else if(estado == 0){
+      }else if(estado == 0){*/
          GETESTADO();  
-         if(modo_movil == "A"){
+         //if(modo_movil == "A"){
             GETTEXTO();
             delay(10000);   
-         }
-      }      
+         //}
+      //}      
     }
   }
 }
@@ -85,7 +87,6 @@ void POSTEAR(String cadena){
     cadena.replace("\r","");
     cadena.replace(" ","");
     cadena.replace("$","");
-    //Serial.println(cadena);
 
     
     HTTPClient http;
@@ -101,14 +102,27 @@ void POSTEAR(String cadena){
     int httpCode = http.GET();
     //Serial.println(httpCode);
     payload = http.getString();
-    Serial.println(payload);
+    //Serial.println(payload);
     http.end();  //Close connection
     delay(1000);
 }
 
 
 void GET3D(){
-  Serial.println("S");
+  if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status
+    String metodo = "getEcuacionActual3D";
+    HTTPClient http; 
+    http.begin(url+metodo); 
+    int httpCode = http.GET(); 
+    if (httpCode > 0) { 
+      payload = http.getString();   //Get the request response payload
+      if(payload != "E"){
+        Serial.println( payload);  //si cambia de estado, envia el caracter A o D para que lo envie a assembler
+      }
+    }
+    http.end(); 
+
+  }
 }
 
 
@@ -179,6 +193,7 @@ void GETTEXTO(){
       payload = http.getString(); 
       if(payload != ""){
         Serial.println( http.getString()); 
+        delay(15000);
       }
     }
     http.end();   
