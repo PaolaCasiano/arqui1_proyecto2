@@ -32,54 +32,217 @@ draw macro poslin, color
 endm
 
 graficarCadena macro cadena,num
-  LOCAL PrimerNum,Coma,SegundoNum,PuntoComa,Salir
-    xor si,si
-    xor di,di
-    num1dw dw ?
-    num2dw dw ?
-    digitnum dw ?
-    ls dw ?
-    mov ls,0
-    mov digitnum,0
-  PrimerNum:
-    mov al,cadena[si]
-    cmp al,2ch
-    je Coma
-    cmp al,24h
-    je Salir
-    mov num[di],al
-    inc di
-    inc si
-    inc digitnum
-    inc ls
-    jmp PrimerNum 
-  Coma:
-    dec ls
-    stringANumero digitnum,ls,num
-    mov num1dw,bx
-    draw num1dw,0Fh
-    inc si
-    limpiarVariable2 num
-    xor di,di
-    mov digitnum,0
-    mov ls,0
-    mov al,cadena[si]
-    cmp al,24h
-    je Salir
-    jmp PrimerNum
-  Salir:
-    ;dec ls
-    ;stringANumero digitnum,ls,num
-    ;mov num2dw,bx
-    ;draw num2dw,0Fh
-    ;inc si
-    ;mov digitnum,0
-    ;mov ls,0
-    ;limpiarVariable2 num
-    ;xor di,di
+LOCAL PrimerNum,Coma,SalirNum,PrimerCoordenada,ComaCoordenada1,SegundaCoordenada,PuntoComa1,TerceraCoordenada,ComaCoordenada3,CuartaCoordenada,Dolar,GraficarEjeX,GraficarEjeY,Salir
+xor si,si
+xor di,di
+num1dw dw ?
+;COORDENADAS--------------
+superiorX dw ?
+inferiorX dw ?
+superiorY dw ?
+inferiorY dw ?
+mov superiorX,0
+mov superiorY,0
+mov inferiorX,0
+mov inferiorY,0
+;GRAFICA------------------
+digitnum dw ?
+ls dw ?
+mov ls,0
+mov digitnum,0
+PrimerNum:
+mov al,cadena[si]
+cmp al,2ch
+je Coma
+cmp al,3bh ;ANTES "$" AHORA ";"
+je SalirNum ;ANTES Salir
+mov num[di],al
+inc di
+inc si
+inc digitnum
+inc ls
+jmp PrimerNum 
+Coma:
+dec ls
+stringANumero digitnum,ls,num
+mov num1dw,bx
+draw num1dw,0Fh
+limpiarVariable2 num
+inc si
+xor di,di
+mov digitnum,0
+mov ls,0
+mov al,cadena[si]
+cmp al,3bh  ;ANTES "$" AHORA ";"
+je SalirNum 
+jmp PrimerNum
+SalirNum:
+dec ls
+stringANumero digitnum,ls,num
+mov num1dw,bx
+draw num1dw,0Fh
+limpiarVariable2 num
+inc si
+xor di,di
+mov digitnum,0
+mov ls,0
 
-    ;mov cx,num1dw
-    ;mov bx,num2dw
+jmp PrimerCoordenada
+;-----------------------------------------< EMPIEZAN COORDENADAS
+PrimerCoordenada:
+; SE PASA A HEXADECIMAL EL PRIMER NUMERO
+mov al,cadena[si]
+cmp al,2ch
+je ComaCoordenada1
+;cmp al,24h 
+;je Salir ;ANTES Salir
+mov num[di],al
+inc di
+inc si
+inc digitnum
+inc ls
+jmp PrimerCoordenada 
+ComaCoordenada1:
+;-----------------------------------------< SE CONVIERTE A HEX EL INFERIOR DE X
+dec ls
+stringANumero digitnum,ls,num
+mov inferiorX,bx
+;draw inferiorX,0Fh
+limpiarVariable2 num
+inc si
+xor di,di
+mov digitnum,0
+mov ls,0
+;mov al,cadena[si]
+;cmp al,24h
+;je Salir ;ANTES "$" AHORA ";"
+jmp SegundaCoordenada
+SegundaCoordenada:
+mov al,cadena[si]
+cmp al,3bh
+je PuntoComa1
+;cmp al,24h 
+;je Salir ;ANTES Salir
+mov num[di],al
+inc di
+inc si
+inc digitnum
+inc ls
+jmp SegundaCoordenada 
+PuntoComa1:
+;-----------------------------------------< SE CONVIERTE A HEX EL SUPERIOR DE X
+dec ls
+stringANumero digitnum,ls,num
+mov superiorX,bx
+;draw superiorX,0Fh
+limpiarVariable2 num
+inc si
+xor di,di
+mov digitnum,0
+mov ls,0
+;mov al,cadena[si]
+;cmp al,24h
+;je Salir ;ANTES "$" AHORA ";"
+jmp TerceraCoordenada
+TerceraCoordenada:
+mov al,cadena[si]
+cmp al,2ch
+je ComaCoordenada3
+;cmp al,24h 
+;je Salir ;ANTES Salir
+mov num[di],al
+inc di
+inc si
+inc digitnum
+inc ls
+jmp TerceraCoordenada
+ComaCoordenada3:
+;-----------------------------------------< SE CONVIERTE A HEX EL INFERIOR DE Y
+dec ls
+stringANumero digitnum,ls,num
+mov inferiorY,bx
+;draw inferiorY,0Fh
+limpiarVariable2 num
+inc si
+xor di,di
+mov digitnum,0
+mov ls,0
+mov al,cadena[si]
+;cmp al,24h
+;je Salir ;ANTES "$" AHORA ";"
+jmp CuartaCoordenada 
+CuartaCoordenada:
+mov al,cadena[si]
+;cmp al,2ch
+;je ComaCoordenada4
+cmp al,24h 
+je Dolar ;ANTES Salir
+mov num[di],al
+inc di
+inc si
+inc digitnum
+inc ls
+jmp CuartaCoordenada
+Dolar:
+;-----------------------------------------< SE CONVIERTE A HEX EL SUPERIOR DE Y
+dec ls
+stringANumero digitnum,ls,num
+mov superiorY,bx
+;draw superiorY,0Fh
+limpiarVariable2 num
+inc si
+xor di,di
+mov digitnum,0
+mov ls,0
+mov al,cadena[si]
+;cmp al,24h
+;je Salir ;ANTES "$" AHORA ";"
+;jmp GraficarEjeX
+mov dl,0Fh
+mov di,inferiorX
+jmp GraficarEjeX
+GraficarEjeX:
+mov es:[di],dl
+inc di
+cmp di,superiorX 
+jne GraficarEjeX
+mov di,inferiorY
+mov cx,0c8h ;198 EN DECIMAL (supY??) NO PUEDEN SER LINEALIZADAS
+jmp GraficarEjeY
+GraficarEjeY:  
+draw2 inferiorY,cx,0Fh  ;160
+loop GraficarEjeY 
+Salir:
+
+endm
+
+draw2 macro x0, y0, color  
+push cx
+mov ah, 0ch
+mov al, color
+mov bh, 0h
+mov dx, y0
+mov cx, x0
+int 10h 
+pop cx
+endm
+
+DibujarEjes macro infX,supX,infY,supY
+LOCAL GraficarEjeX,GraficarEjeY
+
+mov dl,0Fh
+mov di,infX
+GraficarEjeX:
+mov es:[di],dl
+inc di
+cmp di,supX 
+jne GraficarEjeX
+
+;mov di,supY
+mov cx,0c8h ;198 EN DECIMAL (supY??) NO PUEDEN SER LINEALIZADAS
+GraficarEjeY:  
+draw2 infY,cx,0Fh  ;160
+loop GraficarEjeY 
 endm
 
 stringANumero macro digitos,lsnum,num
