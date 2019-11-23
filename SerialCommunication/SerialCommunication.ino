@@ -74,10 +74,8 @@ void loop() {
     String  texto = Serial1.readString();
     //char letra = Serial1.read();
     char letra = texto.charAt(0);
-    Serial.println(texto);
-    Serial.println(letra);
     if(verbose){
-      Serial.println(texto);
+      
       /*switch(letra){
         // llamar cubo
         case 'C':
@@ -136,7 +134,6 @@ void loop() {
       }*/
       if(letra=='C'){
           //llamar cono
-          Serial.println(texto.charAt(0));
           imprimir_cono();
           
       }else if(letra=='S'){
@@ -152,7 +149,6 @@ void loop() {
           }
       }else if(letra == 'B'){
         imprimir_paraboloide();
-
       }else if(letra == 'H'){
           imprimir_hiperboloide1();
       }else if(letra == 'L'){
@@ -162,9 +158,9 @@ void loop() {
       }else if(letra =='~'){
         texto_3d(texto.substring(1,texto.length()-1), 3);
       }else if(letra=='#'){
-          Serial.println(texto.charAt(0));
+          Serial.print("#");
       }else{
-          Serial.println("Texto");
+          Serial.print(texto);
       }
     }
     else{
