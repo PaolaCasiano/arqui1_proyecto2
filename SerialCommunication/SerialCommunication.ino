@@ -1,3 +1,5 @@
+using namespace std;
+#include <string.h>
 String comando = "";
 String comando2 = "";
 bool verbose = true;
@@ -54,7 +56,7 @@ void setup() {
 }
 
 void loop() {
-
+  
   
   if(Serial.available()){
     char letra = Serial.read();
@@ -68,22 +70,29 @@ void loop() {
   }
 
   if(Serial1.available()){
+    
     String  texto = Serial1.readString();
     //char letra = Serial1.read();
     char letra = texto.charAt(0);
+    Serial.println(texto);
+    Serial.println(letra);
     if(verbose){
-      switch(texto.charAt(0)){
+      Serial.println(texto);
+      /*switch(letra){
         // llamar cubo
         case 'C':
           //llamar cono
+          Serial.println(texto.charAt(0));
           imprimir_cono();
           break;
         case 'S':
+          Serial.println(texto.charAt(0));
           //llamar esfera
           imprimir_esfera();
           break;
         case 'P':
           //llamar plano
+          Serial.println(texto.charAt(0));
           int r = random(2);
           if(r==1){
             imprimir_planoi();
@@ -93,29 +102,69 @@ void loop() {
           break;
         case 'B':
           //llamar paraboloide
+          Serial.println(texto.charAt(0));
           imprimir_paraboloide();
           break;
         case 'H':
           //llamar hiperboloide1
+          Serial.println(texto.charAt(0));
           imprimir_hiperboloide1();
           break;
         case 'L':
           //llamar hiperboloide2
+          Serial.println(texto.charAt(0));
           imprimir_hiperboloide2();
           break;
         case 'K':
           //llamar cilindro
+          Serial.println(texto.charAt(0));
           cubo_cilindro();
+          break;
         case '~':
           //verbose = false;
+          Serial.println(texto.charAt(0));
+          texto_3d("p r u e b a",3);
           texto_3d(texto, 3);
           break;
         case '#':
           //ENVIAR A ASSEMBLER EL CAMBIAR DE MODO
+          Serial.println(texto.charAt(0));
+          break;
         default:
-          
           Serial.print(texto);
           break;
+      }*/
+      if(letra=='C'){
+          //llamar cono
+          Serial.println(texto.charAt(0));
+          imprimir_cono();
+          
+      }else if(letra=='S'){
+          //llamar esfera
+          imprimir_esfera();
+          
+      }else if(letra=='P'){
+          int r = random(2);
+          if(r==1){
+            imprimir_planoi();
+          } else{
+            imprimir_planor();
+          }
+      }else if(letra == 'B'){
+        imprimir_paraboloide();
+
+      }else if(letra == 'H'){
+          imprimir_hiperboloide1();
+      }else if(letra == 'L'){
+          imprimir_hiperboloide2();
+      }else if(letra == 'K'){
+          cubo_cilindro();
+      }else if(letra =='~'){
+        texto_3d(texto.substring(1,texto.length()-1), 3);
+      }else if(letra=='#'){
+          Serial.println(texto.charAt(0));
+      }else{
+          Serial.println("Texto");
       }
     }
     else{
